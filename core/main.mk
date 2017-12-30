@@ -481,6 +481,8 @@ else	# !SDK_ONLY
 
 subdirs := \
 	external/droidmedia \
+        frameworks/av/services/audiopolicy \
+        frameworks/av/soundtrigger \
 	abi/cpp \
 	bionic \
 	bootable/recovery \
