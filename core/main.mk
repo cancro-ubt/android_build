@@ -480,6 +480,7 @@ else	# !SDK_ONLY
 #
 
 subdirs := \
+	external/droidmedia \
 	abi/cpp \
 	bionic \
 	bootable/recovery \
@@ -613,6 +614,8 @@ endif
 
 # device and vendor
 subdirs += \
+	device/xiaomi \
+	vendor/xiaomi \
 	device/asus \
 	device/fairphone \
 	device/generic \
