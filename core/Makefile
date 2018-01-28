@@ -524,9 +524,9 @@ ifdef BOARD_USE_LOCAL_INITRD
 	$(hide) $(ACP) $(TARGET_UBUNTU_INITRD_REPO) $@
 else
 	$(call pretty,"Downloading upstream initrd: $(TARGET_UBUNTU_INITRD_PKG) -o $(TARGET_OUT_UBUNTU_INITRD_PKG) -a $(TARGET_UBUNTU_ARCH)$(if $(TARGET_UBUNTU_INITRD_TEAM), -t $(TARGET_UBUNTU_INITRD_TEAM))$(if $(TARGET_UBUNTU_INITRD_PPA), -p $(TARGET_UBUNTU_INITRD_PPA)) $(TARGET_UBUNTU_INITRD_SERIES)")
-	$(hide) rm -rf $(TARGET_OUT_UBUNTU_INITRD_PKG)
-	$(hide) mkdir -p $(TARGET_OUT_UBUNTU_INITRD_PKG)
-	$(hide) $(PULL_LP_BIN) $(TARGET_UBUNTU_INITRD_PKG) -o $(TARGET_OUT_UBUNTU_INITRD_PKG) -a $(TARGET_UBUNTU_ARCH)$(if $(TARGET_UBUNTU_INITRD_TEAM), -t $(TARGET_UBUNTU_INITRD_TEAM))$(if $(TARGET_UBUNTU_INITRD_PPA), -p $(TARGET_UBUNTU_INITRD_PPA)) $(TARGET_UBUNTU_INITRD_SERIES)
+	rm -rf $(TARGET_OUT_UBUNTU_INITRD_PKG)
+	mkdir -p $(TARGET_OUT_UBUNTU_INITRD_PKG)
+	$(PULL_LP_BIN) $(TARGET_UBUNTU_INITRD_PKG) -o $(TARGET_OUT_UBUNTU_INITRD_PKG) -a $(TARGET_UBUNTU_ARCH)$(if $(TARGET_UBUNTU_INITRD_TEAM), -t $(TARGET_UBUNTU_INITRD_TEAM))$(if $(TARGET_UBUNTU_INITRD_PPA), -p $(TARGET_UBUNTU_INITRD_PPA)) $(TARGET_UBUNTU_INITRD_SERIES)
 	$(hide) dpkg-deb -x $(TARGET_OUT_UBUNTU_INITRD_PKG)/$(TARGET_UBUNTU_INITRD_PKG)*.deb $(TARGET_OUT_UBUNTU_INITRD_PKG)
 	$(hide) $(ACP) $(TARGET_UBUNTU_INITRD_LP_IMG) $@
 endif
@@ -596,20 +596,20 @@ INTERNAL_BOOTIMAGE_ARGS += $(INTERNAL_BOOTIMAGE_ARGS_COMMON)
 INTERNAL_BOOTIMAGE_ARGS_ANDROID += $(INTERNAL_BOOTIMAGE_ARGS_COMMON)
 
 $(INSTALLED_BOOTIMAGE_TARGET_ANDROID): $(MKEXT2IMG) $(INTERNAL_BOOTIMAGE_FILES_ANDROID)
-	$(call pretty,"Target boot image for Android: $@")
-	$(hide) $(MKEXT2BOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS_ANDROID) --output $@
+	$(call pretty,"Target boot image for Android 599: $@")
+	$(MKEXT2BOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS_ANDROID) --output $@
 
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKEXT2IMG) $(INTERNAL_BOOTIMAGE_FILES)
-	$(call pretty,"Target boot image for Ubuntu Touch: $@")
-	$(hide) $(MKEXT2BOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) --output $@
+	$(call pretty,"Target boot image for Ubuntu Touch 603: $@")
+	$(MKEXT2BOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) --output $@
 	@echo -e ${CL_CYN}"Made boot image: $@"${CL_RST}
 
 .PHONY: bootimage-nodeps
 bootimage-nodeps: $(MKEXT2IMG)
 	@echo "make $@: ignoring dependencies"
 	$(call pretty,"Repacking ubuntu ramdisk to: $(INSTALLED_RAMDISK_TARGET)")
-	$(hide) cd $(TARGET_OUT_UBUNTU_INITRD) && find . | cpio -o -H newc | $(MINIGZIP) > $(INSTALLED_RAMDISK_TARGET)
-	$(hide) $(MKEXT2BOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
+	cd $(TARGET_OUT_UBUNTU_INITRD) && find . | cpio -o -H newc | $(MINIGZIP) > $(INSTALLED_RAMDISK_TARGET)
+	$(MKEXT2BOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
 
 else ifndef BOARD_CUSTOM_BOOTIMG_MK
 
@@ -620,10 +620,10 @@ $(INSTALLED_BOOTIMAGE_TARGET_ANDROID): $(MKEXT2IMG) $(INTERNAL_BOOTIMAGE_FILES_A
 	$(hide) $(MKEXT2BOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS_ANDROID) --output $@
 
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOT_SIGNER) $(BOOTIMAGE_EXTRA_DEPS)
-	$(call pretty,"Target boot image for Ubuntu Touch: $@")
-	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
+	$(call pretty,"Target boot image for Ubuntu Touch623: $@")
+	$(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
 	$(BOOT_SIGNER) /boot $@ $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY) $@
-	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
 
 .PHONY: bootimage-nodeps
 bootimage-nodeps: $(MKBOOTIMG) $(BOOT_SIGNER)
@@ -644,18 +644,18 @@ $(INSTALLED_BOOTIMAGE_TARGET_ANDROID): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES_A
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE),raw)
 
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOTIMAGE_EXTRA_DEPS)
-	$(call pretty,"Target boot image for Ubuntu Touch: $@")
-	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
-	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(call pretty,"Target boot image for Ubuntu Touch647: $@")
+	$(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
+	$(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
 	@echo -e ${CL_CYN}"Made boot image: $@"${CL_RST}
 
 .PHONY: bootimage-nodeps
 bootimage-nodeps: $(MKBOOTIMG)
 	@echo "make $@: ignoring dependencies"
 	$(call pretty,"Repacking ubuntu ramdisk to: $(INSTALLED_RAMDISK_TARGET)")
-	$(hide) cd $(TARGET_OUT_UBUNTU_INITRD) && find . | cpio -o -H newc | $(MINIGZIP) > $(INSTALLED_RAMDISK_TARGET)
-	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
-	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	cd $(TARGET_OUT_UBUNTU_INITRD) && find . | cpio -o -H newc | $(MINIGZIP) > $(INSTALLED_RAMDISK_TARGET)
+	$(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
+	$(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
 	@echo -e ${CL_INS}"Made boot image: $@"${CL_RST}
 
   endif # PRODUCT_SUPPORTS_VERITY

@@ -607,7 +607,17 @@ subdirs := \
 	system/qcom \
 	system/su \
 	system/security/keystore \
-	system/security/softkeymaster
+	system/security/softkeymaster \
+	frameworks/base/native/android \
+	frameworks/base/core/jni \
+	external/harfbuzz_ng \
+	frameworks/base/libs/storage \
+	frameworks/base/libs/hwui \
+	frameworks/av/media/img_utils \
+	frameworks/minikin/libs/minikin \
+	libnativehelper \
+	external/pdfium \
+
 
 ifeq ($(TARGET_DEVICE),generic_x86)
 subdirs += \
