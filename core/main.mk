@@ -480,6 +480,8 @@ else	# !SDK_ONLY
 #
 
 subdirs := \
+	external/ffmpeg \
+	external/stagefright-plugins \
 	external/droidmedia \
         frameworks/av/services/audiopolicy \
         frameworks/av/soundtrigger \

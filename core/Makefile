@@ -517,25 +517,12 @@ endif
 .PHONY: $(INSTALLED_RAMDISK_TARGET)
 $(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_UBUNTURAMDISK_FILES) | $(MINIGZIP)
 	$(call pretty,"Target Ubuntu Touch ram disk: $@")
-	$(hide) rm -rf $(TARGET_OUT_UBUNTU_INITRD)
-	$(hide) mkdir -p $(TARGET_OUT_UBUNTU_INITRD) $(TARGET_OUT_UBUNTU_INITRD_PKG)
-ifdef BOARD_USE_LOCAL_INITRD
-	$(call pretty,"Using local initrd repo:$(TARGET_UBUNTU_INITRD_REPO)")
-	$(hide) $(ACP) $(TARGET_UBUNTU_INITRD_REPO) $@
-else
-	$(call pretty,"Downloading upstream initrd: $(TARGET_UBUNTU_INITRD_PKG) -o $(TARGET_OUT_UBUNTU_INITRD_PKG) -a $(TARGET_UBUNTU_ARCH)$(if $(TARGET_UBUNTU_INITRD_TEAM), -t $(TARGET_UBUNTU_INITRD_TEAM))$(if $(TARGET_UBUNTU_INITRD_PPA), -p $(TARGET_UBUNTU_INITRD_PPA)) $(TARGET_UBUNTU_INITRD_SERIES)")
-	rm -rf $(TARGET_OUT_UBUNTU_INITRD_PKG)
-	mkdir -p $(TARGET_OUT_UBUNTU_INITRD_PKG)
-#	$(PULL_LP_BIN) $(TARGET_UBUNTU_INITRD_PKG) -o $(TARGET_OUT_UBUNTU_INITRD_PKG) -a $(TARGET_UBUNTU_ARCH)$(if $(TARGET_UBUNTU_INITRD_TEAM), -t $(TARGET_UBUNTU_INITRD_TEAM))$(if $(TARGET_UBUNTU_INITRD_PPA), -p $(TARGET_UBUNTU_INITRD_PPA)) $(TARGET_UBUNTU_INITRD_SERIES)
-	dpkg-deb -x $(TOPDIR)build/ubuntu-touch-generic-initrd_0.94vivid5ubports1_armhf.deb $(TARGET_OUT_UBUNTU_INITRD_PKG)
-	$(ACP) $(TARGET_UBUNTU_INITRD_LP_IMG) $@
-endif
-	$(hide) cd $(TARGET_OUT_UBUNTU_INITRD) && $(MINIGZIP) -c -d $@ | cpio -id
-ifdef BOARD_OVERLAY_INITRD
-	$(hide) if [ -d $(TARGET_OUT_UBUNTU_RAMDISK) ]; then cp -r $(TARGET_OUT_UBUNTU_RAMDISK)/* $(TARGET_OUT_UBUNTU_INITRD); fi
-	$(call pretty,"Repacking ubuntu ramdisk to: $@")
-	$(hide) cd $(TARGET_OUT_UBUNTU_INITRD) && find . | cpio -o -H newc | $(MINIGZIP) > $@
-endif
+	rm -rf $(TARGET_OUT_UBUNTU_INITRD)
+	mkdir -p $(TARGET_OUT_UBUNTU_INITRD)
+
+	cp -R $(TOPDIR)ubuntu/ubports-boot/initramfs/* $(TARGET_OUT_UBUNTU_INITRD)
+	@(cd $(TARGET_OUT_UBUNTU_INITRD) && find . | cpio -H newc -o ) | gzip -9 > $@
+
 
 .PHONY: ramdisk-nodeps
 ramdisk-nodeps: $(MKBOOTFS) | $(MINIGZIP)
